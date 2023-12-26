@@ -12,7 +12,7 @@ class SeatAllocation extends Model
 
     public function trip()
     {
-        return $this->belongsTo(Trip::class);
+        return $this->belongsTo(Trip::class)->with(['originCity','destinationCity']);
     }
     public function scopeNotAvailableSeats($query)
     {

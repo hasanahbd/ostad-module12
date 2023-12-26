@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\SeatAllocationController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +16,7 @@ use App\Http\Controllers\SeatAllocationController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/',[HomeController::class,'index'] );
 Route::post('trips/by-date', [TripController::class, 'tripsByDate'])->name('trips-by-date');
 Route::post('trips/get-booked-seats', [TripController::class, 'bookedSeats'])->name('get-booked-seats');
 Route::resource('trips', TripController::class);

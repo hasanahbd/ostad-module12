@@ -36,8 +36,8 @@
     </style>
 @endsection
 @section('content')
-    <h2>Bus Seat Allocation</h2>
-    
+    <h2 class="text-center">Bus Seat Allocation</h2>
+
     <div class="bus-layout">
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -55,50 +55,59 @@
         @endphp
         <form action="{{ route('seat-allocation.store') }}" method="POST" id="sealtAllocationForm">
             @csrf
-            @if (Auth::user()->role == 'admin')
-                <div class="mb-3">
-                    <label for="passenger" class="form-label">Passenger</label>
-                    <select class="form-select" id="passenger" name="passenger" required>
-                        <option value="">Select Passenger</option>
-                        @foreach ($customers as $customer)
-                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            @endif
-            <div class="mb-3">
-                <label for="tripDate" class="form-label">Date</label>
-                <input type="date" class="form-control" id="tripDate" name="tripDate" required>
-            </div>
-            <div class="mb-3">
-                <label for="tripId" class="form-label">Trips</label>
-                <select class="form-select" id="tripId" name="trip_id" required>
-                </select>
-            </div>
-       
 
-        @while ($seatCounter <= $totalSeats)
-            <div class="bus-row mb-2 d-none">
-                @for ($i = 0; $i < $seatsPerRow && $seatCounter <= $totalSeats; $i++)
-                    @php
-                        $isBooked = true;
-                        // $isBooked = $seats->contains('seat_number', $seatCounter);
-                    @endphp
-
-                    <div id="{{ $seatCounter }}" data-id={{ $seatCounter }} class="seat available selectSeat">
-                        {{ $seatCounter++ }}
+            <div class="row">
+                <div class="col-md-6 ms-5">
+                    @if (Auth::user() && Auth::user()->role == 'admin')
+                        <div class="mb-3 col-6">
+                            <label for="passenger" class="form-label">Passenger</label>
+                            <select class="form-select" id="passenger" name="passenger" required>
+                                <option value="">Select Passenger</option>
+                                @foreach ($customers as $customer)
+                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+                    <div class="mb-3 col-6">
+                        <label for="tripDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="tripDate" name="tripDate" required
+                            min="{{ date('Y-m-d') }}">
                     </div>
-                @endfor
+                    <div class="mb-3 col-6">
+                        <label for="tripId" class="form-label">Trips</label>
+                        <select class="form-select" id="tripId" name="trip_id" required>
+                        </select>
+                    </div>
+                </div>
+    
+                <div class="col-md 6">
+                    @while ($seatCounter <= $totalSeats)
+                        <div class="bus-row mb-2 d-none">
+                            @for ($i = 0; $i < $seatsPerRow && $seatCounter <= $totalSeats; $i++)
+                                @php
+                                    $isBooked = true;
+                                    // $isBooked = $seats->contains('seat_number', $seatCounter);
+                                @endphp
+    
+                                <div id="{{ $seatCounter }}" data-id={{ $seatCounter }} class="seat available selectSeat">
+                                    {{ $seatCounter++ }}
+                                </div>
+                            @endfor
+                        </div>
+                    @endwhile
+                    <input type="hidden" name="selected_seats" id="selectedSeats">
+                    <div id="submitButtonClass" class="text-center d-none">
+                        <button class="btn btn-info" id="submitForm" type="submit">
+                            @if (Auth::user() && Auth::user()->role == 'admin')
+                                Assign Seats
+                            @else
+                                Book Seat
+                            @endif
+                        </button>
+                    </div>
+                </div>
             </div>
-        @endwhile
-        <input type="hidden" name="selected_seats" id="selectedSeats">
-        <button class="btn btn-info" id="submitForm">
-            @if (Auth::user()->role == 'admin')
-                Assign Seats
-            @else
-                Booked Seat
-            @endif
-        </button>
         </form>
     </div>
 @endsection
@@ -180,6 +189,11 @@
                     selectedSeats.push(seatNumber);
                     $(this).addClass('selected').removeClass('available');
                 }
+            }
+            if (selectedSeats.length > 0) {
+                $("#submitButtonClass").removeClass('d-none');
+            } else {
+                $("#submitButtonClass").addClass('d-none');
             }
         })
     </script>

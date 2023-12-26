@@ -17,11 +17,11 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @yield('styles')
 </head>
-<body>
+<body >
     <div id="app">
        @include('layouts.navbar')
 
-        <main class="py-4">
+        <main class="py-4" >
             @yield('content')
         </main>
 
